@@ -4,6 +4,7 @@ import com.vexpress.vexpressbackend.dto.LoginRequestDTO;
 import com.vexpress.vexpressbackend.dto.LoginResponseDTO;
 
 //import com.vexpress.vexpressbackend.mapper.LoginMapper;
+import com.vexpress.vexpressbackend.exception.InvalidCredentialsException;
 import com.vexpress.vexpressbackend.mapper.LoginMapper;
 import com.vexpress.vexpressbackend.model.User;
 import com.vexpress.vexpressbackend.repository.UserRepository;
@@ -36,7 +37,7 @@ public class LoginService {
 
     public ApiResponse<LoginResponseDTO> login(LoginRequestDTO loginRequestDTO) {
         User user = userRepository.findByEmail(loginRequestDTO.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid credentials"));
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
 
         LoginResponseDTO loginResponseDTO = loginMapper.toLoginResponseDTO(user);
 
@@ -46,7 +47,7 @@ public class LoginService {
                         user.getPassword()
                 );
         if (!isPasswordMatched) {
-            throw new IllegalArgumentException("Invalid credentials");
+            throw new InvalidCredentialsException("Invalid email or password");
         }
 
         String token = jwtService.generateToken(user);

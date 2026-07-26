@@ -68,12 +68,6 @@ public class GlobalExceptionHandler {
                 .getFieldErrors()
                 .forEach(error ->
                         errors.put(error.getField(), error.getDefaultMessage()));
-
-        /*return new ApiResponse<>(
-                false,
-                "Validation Failed",
-                errors
-        );*/
         return ApiResponse.error("Validation Failed", errors);
     }
 
@@ -94,30 +88,13 @@ public class GlobalExceptionHandler {
 
     }
 
-    /*//INITIAL CODE//
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleValidationException(MethodArgumentNotValidException exception) {
+    //Method for invalid credentials//
+    @ExceptionHandler(InvalidCredentialsException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ApiResponse<Void> handleInvalidCredentials(
+            InvalidCredentialsException exception) {
 
-        Map<String, String> errors = new HashMap<>();
+        return ApiResponse.error(exception.getMessage());
 
-        exception.getBindingResult().getFieldErrors().forEach(error -> {
-            errors.put(error.getField(), error.getDefaultMessage());
-        });
-
-        return errors;
     }
-
-    @ExceptionHandler(EmployeeNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> handleEmployeeNotFound(
-            EmployeeNotFoundException exception) {
-
-        Map<String, String> error = new HashMap<>();
-
-        error.put("message", exception.getMessage());
-
-        return error;
-    }*/
-
 }
